@@ -13,14 +13,14 @@ const app = express();
 
 // Replace with your mongoLab URI
 const MONGO_URI =
-  'mongodb://phil:1@cluster0-shard-00-00.uwwdk.mongodb.net:27017,cluster0-shard-00-01.uwwdk.mongodb.net:27017,cluster0-shard-00-02.uwwdk.mongodb.net:27017/graphql-auth?ssl=true&replicaSet=atlas-j6witr-shard-0&authSource=admin&retryWrites=true&w=majority';
+  'mongodb+srv://phil:1@cluster0.uwwdk.mongodb.net/<dbname>?retryWrites=true&w=majority';
 
 // Mongoose's built in promise library is deprecated, replace it with ES2015 Promise
 mongoose.Promise = global.Promise;
 
 // Connect to the mongoDB instance and log a message
 // on success or failure
-mongoose.connect(MONGO_URI);
+mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.connection
   .once('open', () => console.log('Connected to MongoLab instance.'))
   .on('error', (error) => console.log('Error connecting to MongoLab:', error));
@@ -36,7 +36,7 @@ app.use(
     saveUninitialized: true,
     secret: 'aaabbbccc',
     store: new MongoStore({
-      url: MONGO_URI,
+      mongooseConnection: mongoose.connection,
       autoReconnect: true,
     }),
   })
